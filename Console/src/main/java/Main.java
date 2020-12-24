@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     private Communications comms;
+    private Tetris tetris;
 
     public static void main(String[] args) {
         launch(args);
@@ -17,16 +18,17 @@ public class Main extends Application {
             message = comms.listen();
             if (!message.equals("")) {
                 System.out.println(message);
-                comms.send("[{'i': 1, 'j': 3, 'color': 0}, {'i': 2, 'j': 3, 'color': 3}, {'score': 100, 'lives': 3}]");
             }
         }
     }
 
     public void start(Stage primaryStage) {
         comms = new Communications();
+        tetris = new Tetris(comms);
         try {
-            this.read();
+            tetris.start();
         } catch (Exception e) {
+            e.printStackTrace();
             comms.close();
             Platform.exit();
             System.exit(0);

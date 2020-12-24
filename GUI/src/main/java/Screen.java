@@ -6,23 +6,23 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Screen {
     private Window window;
     private ArrayList<ArrayList<Pixel>> pixels = new ArrayList<>();
-
+    private ArrayList<Color> colors;
 
     public Screen(Window window) {
 //        Color[] colors = {Color.BLACK, Color.WHITE, Color.BLUE, Color.CYAN, Color.GREEN, Color.GREY, Color.LIME,
 //                Color.RED, Color.PINK, Color.PURPLE, Color.CORAL, Color.BEIGE, Color.AQUAMARINE, Color.DARKCYAN,
 //                Color.BROWN, Color.NAVY};
 
-        Color[] colors =
-                {Color.valueOf("#61A0AF"), Color.valueOf("#96C9DC"), Color.valueOf("#F06C9B"), Color.valueOf("#CBF3F0"),
-                        Color.valueOf("#04E762"), Color.valueOf("#DC0073"), Color.valueOf("#008BF8"), Color.valueOf("#6C464F"),
-                        Color.valueOf("#9FA4C4"), Color.valueOf("#B3CDD1"), Color.valueOf("#C7F0BD"), Color.valueOf("#20063B"),
-                        Color.valueOf("#FFFFFF"), Color.valueOf("#FFD166"), Color.valueOf("#8F8073"), Color.valueOf("#A682FF")};
+         colors= new ArrayList<>(Arrays.asList(Color.valueOf("#61A0AF"), Color.valueOf("#96C9DC"), Color.valueOf("#F06C9B"), Color.valueOf("#CBF3F0"),
+                 Color.valueOf("#04E762"), Color.valueOf("#DC0073"), Color.valueOf("#008BF8"), Color.valueOf("#6C464F"),
+                 Color.valueOf("#9FA4C4"), Color.valueOf("#B3CDD1"), Color.valueOf("#C7F0BD"), Color.valueOf("#20063B"),
+                 Color.valueOf("#FFFFFF"), Color.valueOf("#FFD166"), Color.valueOf("#8F8073"), Color.valueOf("#A682FF")));
         this.window = window;
         for (int i = 0; i < 50; i++) {
             ArrayList<Pixel> temp = new ArrayList<>();
@@ -34,6 +34,8 @@ public class Screen {
     }
 
     public void update(String string) {
+        System.out.println(string);
+        System.out.println("Updating");
         JSONArray jsonArray = null;
         try {
             jsonArray = new JSONArray(string);
@@ -41,9 +43,10 @@ public class Screen {
             err.printStackTrace();
         }
         assert jsonArray != null;
-        for (int i = 0; i < jsonArray.length() - 1; i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObj = jsonArray.getJSONObject(i);
-            System.out.println(jsonObj);
+            Pixel pixel = pixels.get(jsonObj.getInt("i")).get(jsonObj.getInt("j"));
+            pixel.changeColor(colors.get(jsonObj.getInt("value")));
         }
     }
 }
@@ -53,6 +56,10 @@ class Pixel {
     private int j;
     private Window window;
     private Rectangle rectangle;
+
+    public void changeColor(Color color){
+        rectangle.setFill(color);
+    }
 
     public Pixel(int i, int j, Window window) {
         this.i = i;

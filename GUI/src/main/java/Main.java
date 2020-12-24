@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.stage.Stage;
 
 
@@ -13,18 +14,8 @@ public class Main extends Application {
     }
 
     private void read() throws Exception{
-        System.out.println("Reading...");
-        String message = "";
-        while (!message.equals("ESCAPE")){
-            message = comms.listen();
-            if (!message.equals("") && !message.equals("ESCAPE")){
-                System.out.println(message);
-                screen.update(message);
-            }
-        }
-        comms.close();
-        Platform.exit();
-        System.exit(0);
+
+
     }
 
     public void start(Stage primaryStage) {
@@ -33,12 +24,29 @@ public class Main extends Application {
         screen = new Screen(window);
 
 
-        new Thread(() -> {
-            try {
-                this.read();
-            } catch (Exception e) {
-
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("Reading...");
+                String message = "";
+                while (!message.equals("ESCAPE")){
+                    try {
+                        message = comms.listen();
+                    } catch (Exception e) {
+                        System.out.println("");
+                    }
+                    if (!message.equals("") && !message.equals("ESCAPE")){
+                        System.out.println(message);
+                        String finalMessage = message;
+                        Platform.runLater(() -> screen.update(finalMessage));
+                    }
+                }
+                comms.close();
+                Platform.exit();
+                System.exit(0);
+                return null;
             }
-        }).start();
+        };
+        new Thread(task).start();
     }
 }
