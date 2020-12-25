@@ -111,7 +111,9 @@ public class Tetris {
         grid = Utility.copy(actual);
         System.out.println(data);
         try {
-            comms.send(data.toString());
+            if (data.length()>0){
+                comms.send(data.toString());
+            }
         } catch (Exception e) {
             System.out.println("Error while sending changes in grid");
         }

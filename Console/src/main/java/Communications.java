@@ -25,7 +25,9 @@ public class Communications {
         try {
             serverSocket = new ServerSocket(6666);
             listenSocket = serverSocket.accept();
+//            writeSocket = new Socket("172.17.0.1", 1755);
             writeSocket = new Socket("localhost", 7777);
+
             inputStream = new DataInputStream(listenSocket.getInputStream());
             outputStream = new DataOutputStream(writeSocket.getOutputStream());
         } catch (IOException e) {
